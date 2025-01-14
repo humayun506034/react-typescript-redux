@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { useCreateTaskMutation } from "@/redux/api/baseApi";
 
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
@@ -38,10 +39,21 @@ import { useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 export function AddTaskModal() {
+  const [createTask, { data }] = useCreateTaskMutation();
+  console.log("Data", data);
   const [open, setOpen] = useState(false);
   const form = useForm();
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-   
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    const taskData = {
+      ...data,
+      isCompleted: false,
+    };
+
+    const res = await createTask(taskData).unwrap();
+    console.log("Inside submit function", res);
+
+    setOpen(false);
+    form.reset();
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -106,7 +118,7 @@ export function AddTaskModal() {
                 </FormItem>
               )}
             />
-           
+
             <FormField
               control={form.control}
               name="dueDate"

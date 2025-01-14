@@ -5,7 +5,12 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetTasksQuery } from "@/redux/api/baseApi";
 
 const Tasks = () => {
-  const { data, isLoading } = useGetTasksQuery(undefined);
+  const { data, isLoading } = useGetTasksQuery(undefined, {
+    pollingInterval: 30000,
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true,
+  });
   // console.log({ data, isLoading });
 
   if (isLoading) {
@@ -37,7 +42,9 @@ const Tasks = () => {
       <div>
         {!isLoading &&
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          data.tasks.map((task:any) =>  <TaskCard task={task} key={task._id}></TaskCard>)}
+          data.tasks.map((task: any) => (
+            <TaskCard task={task} key={task._id}></TaskCard>
+          ))}
       </div>
     </div>
   );
